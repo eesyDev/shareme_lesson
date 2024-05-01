@@ -1,8 +1,11 @@
-import React from 'react'
+import React from 'react';
+import { GoogleLogin, googleLogout } from '@react-oauth/google';
 
 const Login = () => {
   return (
-    <div>Login</div>
+    <div>
+      <GoogleLogin />
+    </div>
   )
 }
 
