@@ -1,7 +1,9 @@
-import React from 'react';
-import { GoogleLogin, googleLogout } from '@react-oauth/google';
+import React, { useEffect, useState } from 'react';
+import { GoogleLogin, googleLogout, useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
+import { gapi } from 'gapi-script';
+import axios from 'axios';
 
 import bgVideo from '../assets/share.mp4';
 import logo from '../assets/logowhite.png';
@@ -9,6 +11,62 @@ import { client } from '../client.js';
 
 const Login = () => {
 	const navigate = useNavigate();
+	const [ user, setUser ] = useState([]);
+    const [ profile, setProfile ] = useState([]);
+
+
+	const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUser(codeResponse),
+        onError: (error) => console.log('Login Failed:', error)
+    });
+
+    useEffect(() => {
+            if (user) {
+                axios
+                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: 'application/json'
+                        }
+                    })
+                    .then((res) => {
+                        setProfile(res.data);
+                    })
+                    .catch((err) => console.log(err));
+            }
+        },[ user ]);
+
+    const logOut = () => {
+        googleLogout();
+        setProfile(null);
+    };
+
+	
+
+	const handleGoogleLogin = (credentialResponse) => {
+		
+		const { credential } = credentialResponse;
+		console.log(credential);
+
+		// authInstance.signIn().then(res => {
+		// 	const profile = res.getBasicProfile();
+		// 	const id = profile.getId();
+		// 	const name = profile.getName();
+		// 	const imageUrl = profile.getImageUrl();
+		// 	const email = profile.getEmail();
+
+			const doc = {
+				_id: credential,
+				_type: 'user',
+			}
+			
+			client.createIfNotExists(doc).then(() => {
+				localStorage.setItem('user', JSON.stringify(doc));
+				navigate('/', { replace: true })
+			}).catch(error => {
+				console.error('Login failed: ', error )
+			})
+		}
 	return (
 		<div className='flex justify-start items-center flex-col'>
 			<div className="relative w-full h-full">
@@ -26,8 +84,9 @@ const Login = () => {
 						<img src={logo} width="130px" />
 					</div>
 					<div className=''>
-						<button type='button' >
-							<GoogleLogin />
+						<button type='button' className='bg-mainColor flex justify-center items-center p-3 rounded-lg outline-none' onClick={login}>
+							<FcGoogle/>
+							Sign in with Google
 						</button>
 					</div>
 				</div>
