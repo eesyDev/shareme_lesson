@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { gapi } from 'gapi-script';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 
 import bgVideo from '../assets/share.mp4';
+import { setAuthState } from '../redux/slices/authSlice';
 import logo from '../assets/logowhite.png';
 import { client } from '../client.js';
 
@@ -14,9 +16,14 @@ const Login = () => {
 	const [ user, setUser ] = useState([]);
     const [ profile, setProfile ] = useState([]);
 
+	const dispatch = useDispatch();
+
 
 	const login = useGoogleLogin({
-        onSuccess: (codeResponse) => setUser(codeResponse),
+        onSuccess: (codeResponse) => {
+			dispatch(setAuthState({ data: {...codeResponse}, isLoggedIn: true}))
+			setUser(codeResponse)
+		},
         onError: (error) => console.log('Login Failed:', error)
     });
 

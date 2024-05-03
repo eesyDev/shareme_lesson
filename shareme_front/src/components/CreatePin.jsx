@@ -2,28 +2,64 @@ import React, { useState } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { categories } from '../utils/data';
 import { client } from '../client';
 
 const CreatePin = () => {
+  const [userState, setUserState] = useState();
   const [category, setCategory] = useState();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [destination, setDestination] = useState('');
   const [imageAsset, setImageAsset] = useState();
-  const [wrongType, setWrongType] = useState(false)
+  const [wrongType, setWrongType] = useState(false);
 
+  const user = useSelector((state) => state.authApi.data)
+
+  console.log(user)
   console.log(imageAsset);
 
   const uploadImage = (e) => {
     const selectedImage = e.target.files[0]
     if (selectedImage.type === 'image/png' || selectedImage.type === 'image/svg' || selectedImage.type === 'image/jpg' || selectedImage.type === 'image/jpeg' || selectedImage.type === 'image/gif' || selectedImage.type === 'image/tiff') {
       setWrongType(false)
+
+      client.assets.upload('image', selectedImage, { contentType: selectedImage.type, filename: selectedImage.name })
+      .then((document) => {
+        setImageAsset(document)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     } else {
       setWrongType(true)
     }
-    setImageAsset()
+  }
+
+  const savePin = () => {
+    if (title && description && destination && imageAsset && category) {
+      const doc = {
+        _type: 'pin',
+        title,
+        description,
+        destination,
+        image: {
+          _type: 'image',
+          asset: {
+            _type: 'reference',
+            _ref: imageAsset?._id
+          }
+        },
+        userId: user?._id,
+        postedBy: {
+          _type: 'postedBy',
+          _ref: user._id
+        },
+        category
+      }
+    }
   }
 
   return (
@@ -31,6 +67,11 @@ const CreatePin = () => {
       <div className="flex lg:flex-row flex-col justify-center items-center bg-white lg:p-5 p-3 lg:w-4/5">
         <div className="bg-secondaryColor p-3 flex flex-0.7 w-full">
           <div className="flex flex-col justify-center items-center border-2 border-dotted border-gray-300 w-full h-420">
+            {
+              wrongType && (
+                <p>It's wrong file type </p>
+              )
+            }
             {
               !imageAsset ? (
                 <label>

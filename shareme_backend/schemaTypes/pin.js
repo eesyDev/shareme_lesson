@@ -19,6 +19,11 @@ export default {
             type:'url'
         },
         {
+            name: 'category',
+            title: 'Category',
+            type: 'url'
+        },
+        {
             name: 'image',
             title: 'Image',
             type: 'image',
