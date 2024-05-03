@@ -36,37 +36,34 @@ const Login = () => {
             }
         },[ user ]);
 
+	useEffect(() => {
+		if (profile.id) {
+			const doc = {
+				_id: profile.id,
+				_type: 'user',
+				userName: profile.name,
+				email: profile.email,
+				image: profile.picture
+			};
+	
+			client.createIfNotExists(doc)
+			.then(() => {
+				localStorage.setItem('user', JSON.stringify(doc));
+				navigate('/', { replace: true });
+			})
+			.catch(error => {
+				console.error('Create is failed: ', error);
+			});
+		}
+	}, [profile, navigate]);
+
     const logOut = () => {
         googleLogout();
         setProfile(null);
     };
-
+	
 	
 
-	const handleGoogleLogin = (credentialResponse) => {
-		
-		const { credential } = credentialResponse;
-		console.log(credential);
-
-		// authInstance.signIn().then(res => {
-		// 	const profile = res.getBasicProfile();
-		// 	const id = profile.getId();
-		// 	const name = profile.getName();
-		// 	const imageUrl = profile.getImageUrl();
-		// 	const email = profile.getEmail();
-
-			const doc = {
-				_id: credential,
-				_type: 'user',
-			}
-			
-			client.createIfNotExists(doc).then(() => {
-				localStorage.setItem('user', JSON.stringify(doc));
-				navigate('/', { replace: true })
-			}).catch(error => {
-				console.error('Login failed: ', error )
-			})
-		}
 	return (
 		<div className='flex justify-start items-center flex-col'>
 			<div className="relative w-full h-full">
