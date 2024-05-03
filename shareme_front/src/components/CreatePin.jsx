@@ -12,9 +12,18 @@ const CreatePin = () => {
   const [description, setDescription] = useState('');
   const [destination, setDestination] = useState('');
   const [imageAsset, setImageAsset] = useState();
+  const [wrongType, setWrongType] = useState(false)
+
+  console.log(imageAsset);
 
   const uploadImage = (e) => {
-    setImageAsset(e.target.files)
+    const selectedImage = e.target.files[0]
+    if (selectedImage.type === 'image/png' || selectedImage.type === 'image/svg' || selectedImage.type === 'image/jpg' || selectedImage.type === 'image/jpeg' || selectedImage.type === 'image/gif' || selectedImage.type === 'image/tiff') {
+      setWrongType(false)
+    } else {
+      setWrongType(true)
+    }
+    setImageAsset()
   }
 
   return (
@@ -43,7 +52,11 @@ const CreatePin = () => {
                 onChange={uploadImage}
                 />
             </label>
-              ) : 'Image'
+              ) : (
+                <div className='relative h-full'>
+                  <img src={imageAsset?.url}/>
+                </div>
+              )
             }
           </div>
         </div>
