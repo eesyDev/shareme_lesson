@@ -42,7 +42,6 @@ const Login = () => {
 				_id: profile.id,
 				_type: 'user',
 				userName: profile.name,
-				email: profile.email,
 				image: profile.picture
 			};
 	
