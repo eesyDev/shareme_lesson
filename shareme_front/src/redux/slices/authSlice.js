@@ -5,17 +5,17 @@ const initialState = {
     isLoggedIn: false
 };
 
-export const authApi = createSlice({
+export const authSlice = createSlice({
     name: 'authApi',
     initialState,
     reducers: {
         setAuthState: (state, action) => {
-            state.data = action.payload;
+            state.data = action.payload.data;
             state.isLoggedIn = action.payload.isLoggedIn
         }
     }
 });
 
-export const { setAuthState } = authApi.actions
+export const { setAuthState } = authSlice.actions
 
-export default authApi.reducer
+export default authSlice.reducer

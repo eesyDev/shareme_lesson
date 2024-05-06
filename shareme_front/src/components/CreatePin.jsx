@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { categories } from '../utils/data';
 import { client } from '../client';
+import { setAuthState } from '../redux/slices/authSlice';
 
 const CreatePin = () => {
   const [userState, setUserState] = useState();
@@ -16,10 +17,18 @@ const CreatePin = () => {
   const [imageAsset, setImageAsset] = useState();
   const [wrongType, setWrongType] = useState(false);
 
-  const user = useSelector((state) => state.authApi.data)
+  const dispatch = useDispatch();
 
-  console.log(user)
-  console.log(imageAsset);
+  useEffect(() => {
+    const userLocal = localStorage.getItem('user')!== undefined ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
+    if (userLocal) {
+      dispatch(setAuthState({ data: {...userLocal}, isLoggedIn: true}))
+    }
+  }, [dispatch])
+  
+  const user = useSelector((state) => state.authSlice)
+
+  console.log(user);
 
   const uploadImage = (e) => {
     const selectedImage = e.target.files[0]
@@ -135,6 +144,9 @@ const CreatePin = () => {
                   ))
                 }
               </select>
+            </div>
+            <div className='flex justify-end items-end mt-5'>
+              <button className='bg-red-500 text-white font-bold text-lg sm:text-xl rounded-full w-28 p-2' onClick={savePin}>Save Pin</button>
             </div>
           </div>
         </div>

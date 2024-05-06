@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { gapi } from 'gapi-script';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import bgVideo from '../assets/share.mp4';
 import { setAuthState } from '../redux/slices/authSlice';
@@ -18,10 +18,12 @@ const Login = () => {
 
 	const dispatch = useDispatch();
 
+	const userRed = useSelector((state) => state.authSlice)
+
+	console.log(userRed)
 
 	const login = useGoogleLogin({
         onSuccess: (codeResponse) => {
-			dispatch(setAuthState({ data: {...codeResponse}, isLoggedIn: true}))
 			setUser(codeResponse)
 		},
         onError: (error) => console.log('Login Failed:', error)
