@@ -1,8 +1,14 @@
-import React from 'react'
+import React from 'react';
 
-const MasonryLayout = () => {
+import Pin from './Pin'
+
+const MasonryLayout = ({ pins }) => {
   return (
-    <div>MasonryLayout</div>
+    <div>
+      { pins?.map((item) => (
+        <div><Pin pin={item}/></div>
+      )) }
+    </div>
   )
 }
 

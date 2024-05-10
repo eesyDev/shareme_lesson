@@ -16,8 +16,10 @@ const CreatePin = () => {
   const [destination, setDestination] = useState('');
   const [imageAsset, setImageAsset] = useState();
   const [wrongType, setWrongType] = useState(false);
+  const [fields, setFields] = useState();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userLocal = localStorage.getItem('user')!== undefined ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
@@ -28,7 +30,7 @@ const CreatePin = () => {
   
   const user = useSelector((state) => state.authSlice)
 
-  console.log(user);
+  console.log(user?.data);
 
   const uploadImage = (e) => {
     const selectedImage = e.target.files[0]
@@ -61,18 +63,31 @@ const CreatePin = () => {
             _ref: imageAsset?._id
           }
         },
-        userId: user?._id,
+        userId: user?.data?._id,
         postedBy: {
           _type: 'postedBy',
-          _ref: user._id
+          _ref: user?.data?._id
         },
         category
-      }
+      };
+
+      client.create(doc).then(() => {
+        navigate('/');
+      })
+    } else {
+      setFields(true)
+
+      setTimeout(() => {
+        setFields(false)
+      }, 2000)
     }
   }
 
   return (
     <div className='flex flex-col justify-center items-center mt-5 lg:h-4/5'>
+      {fields && (
+        <p className='text-red-500 mb-5 text-xl transition-all duration-150 ease-in'>Please fill all fields.</p>
+      )}
       <div className="flex lg:flex-row flex-col justify-center items-center bg-white lg:p-5 p-3 lg:w-4/5">
         <div className="bg-secondaryColor p-3 flex flex-0.7 w-full">
           <div className="flex flex-col justify-center items-center border-2 border-dotted border-gray-300 w-full h-420">

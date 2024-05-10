@@ -21,7 +21,7 @@ export default {
         {
             name: 'category',
             title: 'Category',
-            type: 'url'
+            type: 'string'
         },
         {
             name: 'image',
@@ -35,6 +35,11 @@ export default {
             name: 'userId',
             title: 'User ID',
             type:'string'
+        },
+        {
+            name: 'postedBy',
+            title: 'Posted By',
+            type:'postedBy',
         },
         {
             name: 'save',
