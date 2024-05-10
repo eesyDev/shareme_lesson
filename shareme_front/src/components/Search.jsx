@@ -1,25 +1,35 @@
 import React, { useState, useEffect } from 'react';
+
 import { client } from '../client';
-import { searchQuery } from '../utils/data';
+import MasonryLayout from './MasonryLayout';
+import { searchQuery, feedQuery } from '../utils/data';
 
 const Search = ({ searchTerm }) => {
   const [pins, setPins] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const query = searchQuery(searchTerm);
     if (searchTerm !== '') {
+      const query = searchQuery(searchTerm);
       setLoading(true);
-
       client.fetch(query).then((data) => {
         setPins(data);
         setLoading(false);
       })
+    } else {
+      client.fetch(feedQuery).then((data) => {
+        setPins(data);
+        // setLoading(false);
+      })
     }
-  }, []);
+  }, [searchTerm]);
+
+  console.log(pins)
 
   return (
-    <div>Search</div>
+    <div>
+      <MasonryLayout pins={pins}/>
+    </div>
   )
 }
 
