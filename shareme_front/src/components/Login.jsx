@@ -20,8 +20,6 @@ const Login = () => {
 
 	const userRed = useSelector((state) => state.authSlice)
 
-	console.log(userRed)
-
 	const login = useGoogleLogin({
         onSuccess: (codeResponse) => {
 			setUser(codeResponse)
@@ -46,12 +44,12 @@ const Login = () => {
 	},[ user ]);
 
 	useEffect(() => {
-		if (profile.id) {
+		if (profile?.id) {
 			const doc = {
-				_id: profile.id,
+				_id: profile?.id,
 				_type: 'user',
-				userName: profile.name,
-				image: profile.picture
+				userName: profile?.name,
+				image: profile?.picture
 			};
 	
 			client.createIfNotExists(doc)
@@ -67,10 +65,9 @@ const Login = () => {
 
     const logOut = () => {
         googleLogout();
+		window.localStorage.removeItem('user')
         setProfile(null);
     };
-	
-	
 
 	return (
 		<div className='flex justify-start items-center flex-col'>
@@ -88,12 +85,19 @@ const Login = () => {
 					<div className='p-5'>
 						<img src={logo} width="130px" />
 					</div>
+					{!profile ?
 					<div className=''>
 						<button type='button' className='bg-mainColor flex justify-center items-center p-3 rounded-lg outline-none' onClick={login}>
 							<FcGoogle/>
 							Sign in with Google
 						</button>
+					</div> : <div>
+						<button type='button' className='bg-mainColor flex justify-center items-center p-3 rounded-lg outline-none' onClick={logOut}>
+							<FcGoogle/>
+							Logout
+						</button>
 					</div>
+					}
 				</div>
 			</div>
 		</div>
